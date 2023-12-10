@@ -1,0 +1,55 @@
+# version: '3'
+# services:
+#   web:
+#     build: .
+#     environment:
+#       - FLASK_APP=app
+#       - FLASK_ENV=development
+#       - DATABASE_URL=postgresql://username:password@db:5432/dbname
+#     depends_on:
+#       - db
+#     ports:
+#       - "5000:5000" # if you want to expose Flask's port
+#   db:
+#     image: postgres
+#     environment:
+#       - POSTGRES_PASSWORD=password
+#       - POSTGRES_USER=username
+#       - POSTGRES_DB=dbname
+#     ports:
+#       - "5432:5432" # if you want to access PostgreSQL from the host
+
+version: '3'
+services:
+  web:
+    build: .
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://username:password@db:5432/dbname
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=username
+      - POSTGRES_DB=dbname
+    ports:
+      - "5432:5432"
+
+  # frontend:
+  #   # entrypoint: /bin/sh
+  #   build: ./react-vite
+  #   ports:
+  #     - "5735:5173"
+  #   volumes:
+  #     - ./react-vite:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - NODE_ENV=produciton
+  #   stdin_open: true
+  #   tty: true
