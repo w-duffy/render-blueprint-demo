@@ -1,0 +1,22 @@
+services:
+- type: web
+  name: flask-app
+  # env: python
+  env: docker
+  plan: free
+  # buildCommand: <your-build-command>  # e.g., pip install -r requirements.txt
+  # startCommand: gunicorn app:app
+  envVars:
+    - key: FLASK_ENV
+      value: production
+    - key: DATABASE_URL
+      fromDatabase:
+        name: dbname
+        property: connectionString
+  healthCheckPath: /health
+
+databases:
+- name: dbname
+  plan: free
+  type: postgres
+  version: 15
