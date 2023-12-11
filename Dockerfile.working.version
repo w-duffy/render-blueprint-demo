@@ -1,0 +1,25 @@
+FROM python:3.11-alpine
+# Install dependencies
+
+
+COPY requirements.txt .
+RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir psycopg2
+
+
+# Set the working directory
+WORKDIR /var/www
+
+# Copy the application files
+COPY . .
+
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Command to start the application
+CMD ["gunicorn", "app:app"]

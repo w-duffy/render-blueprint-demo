@@ -1,0 +1,72 @@
+# Dockerfile located in the Root directory
+FROM python:3.11-alpine
+
+# Install system dependencies
+RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
+
+# Copy and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install psycopg2
+RUN pip install --no-cache-dir psycopg2
+
+
+# Set the working directory
+WORKDIR /var/www
+
+
+# Copy the application files
+COPY . .
+
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Command to start the application
+CMD ["gunicorn", "app:app"]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+entrypoint.sh located in the root directory:
+
+#!/bin/sh
+
+echo "Waiting for PostgreSQL to start..."
+while ! nc -z db 5432; do
+  sleep 0.1
+done
+echo "PostgreSQL started"
+
+flask db upgrade
+
+flask seed all
+
+exec gunicorn app:app --bind 0.0.0.0:8000
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docker-compose.yml located in the root directory:
+
+version: '3'
+services:
+  web:
+    build: .
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://username:password@db:5432/dbname
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=username
+      - POSTGRES_DB=dbname
+    ports:
+      - "5432:5432"

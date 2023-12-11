@@ -2,29 +2,51 @@ import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
 import react from "@vitejs/plugin-react";
 
-
-export default defineConfig({
-
-  // ↓↓↓ change to logLevel: 'info' ↓↓↓
-  logLevel: 'info',
-  // ↑↑↑ change to logLevel: 'info' ↑↑↑
-
-  plugins: [react()],
+// https://vitejs.dev/config/
+export default defineConfig((mode) => ({
+  plugins: [
+    react(),
+    eslintPlugin({
+      lintOnStart: true,
+      failOnError: mode === "production",
+    }),
+  ],
   server: {
-    host: process.env.VITE_HOST || null,
-    port: process.env.VITE_PORT || null,
-    hmr: {
-      clientPort: process.env.VITE_CLIENT_PORT || null
-    },
+    open: true,
+    port: 3000,
     proxy: {
-      '^/web': {
-        target: 'http://web',
-        // target: '/',
-        changeOrigin: true
-      }
-    }
-  }
-})
+      "/api": "http://127.0.0.1:8000",
+    },
+  },
+}));
+
+// import { defineConfig } from "vite";
+// import eslintPlugin from "vite-plugin-eslint";
+// import react from "@vitejs/plugin-react";
+
+
+// export default defineConfig({
+
+//   // ↓↓↓ change to logLevel: 'info' ↓↓↓
+//   logLevel: 'info',
+//   // ↑↑↑ change to logLevel: 'info' ↑↑↑
+
+//   plugins: [react()],
+//   server: {
+//     host: process.env.VITE_HOST || null,
+//     port: process.env.VITE_PORT || null,
+//     hmr: {
+//       clientPort: process.env.VITE_CLIENT_PORT || null
+//     },
+//     proxy: {
+//       '^/web': {
+//         target: 'http://web',
+//         // target: '/',
+//         changeOrigin: true
+//       }
+//     }
+//   }
+// })
 
 // https://vitejs.dev/config/
 // export default defineConfig((mode) => ({

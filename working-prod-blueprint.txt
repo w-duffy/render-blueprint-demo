@@ -1,0 +1,71 @@
+# Dockerfile located in the Root directory
+FROM python:3.11-alpine
+
+# Install system dependencies
+RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
+
+# Copy and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install psycopg2
+RUN pip install --no-cache-dir psycopg2
+
+
+# Set the working directory
+WORKDIR /var/www
+
+
+# Copy the application files
+COPY . .
+
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Command to start the application
+CMD ["gunicorn", "app:app"]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+entrypoint.sh located in the root directory:
+
+#!/bin/sh
+
+# echo "PostgreSQL started"
+
+# flask db upgrade
+# flask seed all
+# exec gunicorn app:app
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+render.yaml located in the root directory:
+
+services:
+- type: web
+  name: flask-app
+  # env: python
+  env: docker
+  plan: free
+  region: ohio
+  envVars:
+    - key: FLASK_ENV
+      value: production
+    - key: FLASK_APP
+      value: app
+    - key: DATABASE_URL
+      fromDatabase:
+        name: dbname
+        property: connectionString
+    - key: SCHEMA
+      value: demo_app
+    - key: SECRET_KEY
+      generateValue: true
+
+databases:
+- name: dbname
+  plan: free
+  region: ohio

@@ -10,6 +10,7 @@ module.exports = {
   parserOptions: { ecmaVersion: "latest", sourceType: "module" },
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh"],
+
   overrides: [
     {
       files: ["src/context/*.jsx"],
@@ -25,5 +26,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "react/prop-types": "off",
+    "react/no-unescaped-entities": "off", 
   },
 };
