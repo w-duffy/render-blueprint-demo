@@ -17,6 +17,6 @@ services:
 
 databases:
 - name: dbname
-  plan: free
-  type: postgres
-  version: 15
+  # plan: free
+  # type: postgres
+  # version: 15
