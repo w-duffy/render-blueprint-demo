@@ -1,5 +1,4 @@
 import os
-print("HERE")
 from flask import Flask, render_template, request, session, redirect
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -34,7 +33,8 @@ db.init_app(app)
 Migrate(app, db)
 
 # Application Security
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app)
 
 
 # Since we are deploying with Docker and Flask,
@@ -60,7 +60,6 @@ def inject_csrf_token(response):
         samesite='Strict' if os.environ.get(
             'FLASK_ENV') == 'production' else None,
         httponly=True)
-    print(vars(response))
     return response
 
 

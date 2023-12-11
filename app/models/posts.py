@@ -22,5 +22,4 @@ class Post(db.Model):
             'title': self.title,
             'content': self.content,
             'image_url': self.image_url,
-            "likes": [like.to_dict() for like in self.likes],
         }
