@@ -13,6 +13,8 @@ services:
       fromDatabase:
         name: dbname
         property: connectionString
+    - key: SCHEMA
+      value: demo_app
   healthCheckPath: /health
 
 databases:
