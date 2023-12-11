@@ -8,9 +8,7 @@ def user_exists(form, field):
     # Checking if user exists
     print("Checking if user exists", field.data)
     email = field.data
-    print("email", email)
     user = User.query.filter(User.email == email).first()
-    print("user", user)
     if not user:
         raise ValidationError('Email provided not found.')
 

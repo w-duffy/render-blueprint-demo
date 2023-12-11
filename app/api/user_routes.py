@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from flask_login import login_required
 from app.models import User
 
@@ -21,6 +21,5 @@ def user(id):
     """
     Query for a user by id and returns that user in a dictionary
     """
-    posts = User.query.get(id).posts
     user = User.query.get(id)
     return user.to_dict()

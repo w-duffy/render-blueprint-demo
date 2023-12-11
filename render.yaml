@@ -15,7 +15,7 @@ services:
         property: connectionString
     - key: SCHEMA
       value: demo_app
-  healthCheckPath: /health
+  # healthCheckPath: /health
 
 databases:
 - name: dbname

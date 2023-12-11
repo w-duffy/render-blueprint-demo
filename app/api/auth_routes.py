@@ -12,7 +12,6 @@ def authenticate():
     """
     Authenticates a user.
     """
-    print("HERE", request)
     if current_user.is_authenticated:
         return current_user.to_dict()
 
@@ -24,16 +23,12 @@ def login():
     """
     Logs a user in
     """
-    print("in login")
+
     form = LoginForm()
     # Get the csrf_token from the request cookie and put it into the
     # form manually to validate_on_submit can be used
     form['csrf_token'].data = request.cookies['csrf_token']
-    print("form", form)
-    print("form.data", form.data)
-    print("form.data", form.validate_on_submit())
     if form.validate_on_submit():
-        print("in validate on submit")
         # Add the user to the session, we are logged in!
         user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
