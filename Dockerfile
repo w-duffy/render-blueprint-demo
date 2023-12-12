@@ -30,6 +30,7 @@
 FROM python:3.11-alpine
 
 # Install system dependencies
+# RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
 RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
 
 # Copy and install Python dependencies
