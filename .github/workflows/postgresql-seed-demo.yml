@@ -1,5 +1,6 @@
 name: Main Branch CI
 
+# this runs on any pr to main and subsequent commit to that branch
 on:
   pull_request:
     types:
