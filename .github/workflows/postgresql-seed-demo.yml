@@ -171,16 +171,8 @@ name: Main Branch CI
 # This is what triggers the action
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - ready_for_review
-      - labeled
-      - unlabeled
-      - edited
-      - synchronize
-    branches:
-      - 'main'
+    types: [opened, reopened, edited, synchronize]
+    branches: ['main']
 
 jobs:
   build-and-test-migrations-and-seeds:
@@ -221,12 +213,12 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-
+  #comment
     # Install dependencies
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        pip install psycopg2
+        pip install --no-cache-dir -r requirements.txt
+        pip install --no-cache-dir psycopg2
 
 
     - name: Run migrations and seed database

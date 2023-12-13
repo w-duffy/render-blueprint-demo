@@ -26,12 +26,21 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # This Works with Docker Compose and the render.yaml Blueprint deployment
 
-# FROM python:3.9.18-alpine3.18
-FROM python:3.11-alpine
+
+FROM python:3.11-slim
 
 # Install system dependencies
 # RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
-RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
+# RUN apt-get --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    postgresql-client libpq-dev \
+    gcc python3-dev \
+    netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
+
+
 
 # Copy and install Python dependencies
 COPY requirements.txt .
