@@ -68,6 +68,80 @@
 
 #     # Additional steps such as running tests can be added here
 
+
+# THIS VERSION WORKS:
+# name: Main Branch CI
+
+# on:
+#   pull_request:
+#     types:
+#       - opened
+#       - reopened
+#       - ready_for_review
+#       - labeled
+#       - unlabeled
+#       - edited
+#       - synchronize
+#     branches:
+#       - 'main'
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     services:
+#       postgres:
+#         image: postgres
+#         env:
+#           POSTGRES_PASSWORD: password
+#           POSTGRES_USER: username
+#           POSTGRES_DB: dbname
+#         ports:
+#           - 5432:5432
+#         # Set health checks to wait until postgres is ready
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+
+#     steps:
+#     - uses: actions/checkout@v4
+
+#     # Set up Python environment
+#     - name: Set up Python
+#       uses: actions/setup-python@v4
+#       with:
+#         python-version: '3.9'
+
+#     # Cache Python dependencies
+#     - name: Cache Python dependencies
+#       uses: actions/cache@v3
+#       with:
+#         path: ~/.cache/pip
+#         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-pip-
+
+#     # Install dependencies
+#     - name: Install dependencies
+#       run: |
+#         pip install -r requirements.txt
+#         pip install psycopg2
+
+#     # Run your migrations and seeding
+#     - name: Run migrations and seed database
+#       env:
+#         FLASK_APP: app
+#         SCHEMA: mydb
+#         FLASK_ENV: production
+#         DATABASE_URL: postgresql://username:password@localhost:5432/dbname
+#       run: |
+#         flask db upgrade
+#         flask seed all
+
+
+# NEW VERSION TO IMPROVE SPEED:
 name: Main Branch CI
 
 on:
@@ -84,7 +158,7 @@ on:
       - 'main'
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     services:
@@ -96,7 +170,6 @@ jobs:
           POSTGRES_DB: dbname
         ports:
           - 5432:5432
-        # Set health checks to wait until postgres is ready
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -106,28 +179,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
 
-    # Cache Python dependencies
     - name: Cache Python dependencies
       uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        path: ~/.cache/pipenv
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+          ${{ runner.os }}-pipenv-
 
-    # Install dependencies
-    - name: Install dependencies
+    - name: Install dependencies with pipenv
       run: |
-        pip install requirements.txt
-        pip install psycopg2
+        pip install pipenv
+        pipenv install --deploy --ignore-pipfile
 
-    # Run your migrations and seeding
     - name: Run migrations and seed database
       env:
         FLASK_APP: app
@@ -135,5 +204,7 @@ jobs:
         FLASK_ENV: production
         DATABASE_URL: postgresql://username:password@localhost:5432/dbname
       run: |
-        flask db upgrade
-        flask seed all
+        pipenv run flask db upgrade
+        pipenv run flask seed all
+
+    # Add additional steps for testing, linting, etc.
