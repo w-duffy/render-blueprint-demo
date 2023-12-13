@@ -194,8 +194,8 @@ jobs:
 
     - name: Install dependencies with pipenv
       run: |
-        pip install pipenv
-        pipenv install --deploy --ignore-pipfile
+        pip install --no-cache-dir -r requirements.txt
+        pip install --no-cache-dir psycopg2
 
     - name: Run migrations and seed database
       env:
@@ -204,7 +204,7 @@ jobs:
         FLASK_ENV: production
         DATABASE_URL: postgresql://username:password@localhost:5432/dbname
       run: |
-        pipenv run flask db upgrade
-        pipenv run flask seed all
+        flask db upgrade
+        flask seed all
 
     # Add additional steps for testing, linting, etc.
