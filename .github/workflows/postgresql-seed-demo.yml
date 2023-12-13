@@ -1,0 +1,54 @@
+name: Main Branch CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: username
+          POSTGRES_DB: dbname
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres is ready
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install --no-cache-dir -r requirements.txt
+        pip install --no-cache-dir psycopg2
+
+    # Run your migrations and seeding
+    - name: Run migrations and seed database
+      env:
+        FLASK_APP: app
+        SCHEMA: mydb
+        FLASK_ENV: production
+        DATABASE_URL: postgresql://username:password@localhost:5432/dbname
+      run: |
+        flask db upgrade
+        flask seed all
+
+    # Additional steps such as running tests can be added here
