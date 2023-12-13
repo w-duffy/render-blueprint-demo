@@ -124,7 +124,7 @@ jobs:
     # Install dependencies
     - name: Install dependencies
       run: |
-        pip install requirements.txt
+        pip install -r requirements.txt
         pip install psycopg2
 
     # Run your migrations and seeding
