@@ -1,9 +1,22 @@
 name: Main Branch CI
 
 on:
-  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - labeled
+      - unlabeled
+      - edited
     branches:
-      - main
+      - 'main'
+
+# this runs when something is pushed to the main branch
+# on:
+#   push:
+#     branches:
+#       - main
 
 jobs:
   build:
