@@ -1,6 +1,75 @@
+# name: Main Branch CI
+
+# # this runs on any pr to main and subsequent commit to that branch
+# on:
+#   pull_request:
+#     types:
+#       - opened
+#       - reopened
+#       - ready_for_review
+#       - labeled
+#       - unlabeled
+#       - edited
+#       - synchronize
+#     branches:
+#       - 'main'
+
+# # this runs when something is pushed to the main branch
+# # on:
+# #   push:
+# #     branches:
+# #       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     services:
+#       postgres:
+#         image: postgres
+#         env:
+#           POSTGRES_PASSWORD: password
+#           POSTGRES_USER: username
+#           POSTGRES_DB: dbname
+#         ports:
+#           - 5432:5432
+#         # Set health checks to wait until postgres is ready
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+
+#     steps:
+#     - uses: actions/checkout@v4
+
+#     # Set up Python environment
+#     - name: Set up Python
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: '3.11'
+
+#     # Install dependencies
+#     - name: Install dependencies
+#       run: |
+#         pip install --no-cache-dir -r requirements.txt
+#         pip install --no-cache-dir psycopg2
+
+#     # Run your migrations and seeding
+#     - name: Run migrations and seed database
+#       env:
+#         FLASK_APP: app
+#         SCHEMA: mydb
+#         FLASK_ENV: production
+#         DATABASE_URL: postgresql://username:password@localhost:5432/dbname
+#       run: |
+#         flask db upgrade
+#         flask seed all
+
+#     # Additional steps such as running tests can be added here
+
 name: Main Branch CI
 
-# this runs on any pr to main and subsequent commit to that branch
 on:
   pull_request:
     types:
@@ -13,12 +82,6 @@ on:
       - synchronize
     branches:
       - 'main'
-
-# this runs when something is pushed to the main branch
-# on:
-#   push:
-#     branches:
-#       - main
 
 jobs:
   build:
@@ -41,13 +104,22 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     # Set up Python environment
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.9'
+
+    # Cache Python dependencies
+    - name: Cache Python dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
     # Install dependencies
     - name: Install dependencies
@@ -65,5 +137,3 @@ jobs:
       run: |
         flask db upgrade
         flask seed all
-
-    # Additional steps such as running tests can be added here
