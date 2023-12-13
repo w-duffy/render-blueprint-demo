@@ -158,8 +158,9 @@ on:
       - 'main'
 
 jobs:
-  setup-db:
+  build-and-test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres
@@ -174,63 +175,36 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pipenv
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pipenv-
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pipenv
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pipenv-
 
-      - name: Install dependencies with pipenv
-        run: |
-          pip install pipenv
-          pipenv install --deploy --ignore-pipfile
+    - name: Install dependencies with pipenv
+      run: |
+        pip install pipenv
+        pipenv install --deploy --ignore-pipfile
 
-  migrate-db:
-    needs: setup-db
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    - name: Run migrations and seed database
+      env:
+        FLASK_APP: app
+        SCHEMA: mydb
+        FLASK_ENV: production
+        DATABASE_URL: postgresql://username:password@localhost:5432/dbname
+      run: |
+        pipenv run flask db upgrade
+        pipenv run flask seed all
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies with pipenv
-        run: |
-          pip install pipenv
-          pipenv install --deploy --ignore-pipfile
-
-      - name: Run migrations
-        run: |
-          pipenv run flask db upgrade
-
-  seed-db:
-    needs: migrate-db
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies with pipenv
-        run: |
-          pip install pipenv
-          pipenv install --deploy --ignore-pipfile
-
-      - name: Seed database
-        run: |
-          pipenv run flask seed all
+    # Add additional steps for testing, linting, etc.
