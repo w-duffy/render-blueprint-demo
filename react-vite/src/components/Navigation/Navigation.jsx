@@ -6,15 +6,12 @@ function Navigation() {
   return (
     <ul>
       <li>
-        <NavLink to="/">Home</NavLink>
+        <NavLink to="/">yessss</NavLink>
       </li>
 
       <li>
         <ProfileButton />
       </li>
-      <li>
-        <h1>SKIIIIRt</h1>
-        </li>
             </ul>
   );
 }

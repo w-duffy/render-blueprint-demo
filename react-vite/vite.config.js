@@ -12,10 +12,15 @@ export default defineConfig((mode) => ({
     }),
   ],
   server: {
-    open: true,
+    // open: true,
     port: 3000,
+    host: true,
+    strictPort: true,
     proxy: {
-      "/api": "http://127.0.0.1:8000",
+      "^/web":{
+        target: "http://web",
+        changeOrigin: true
+      }
     },
   },
 }));

@@ -1,4 +1,4 @@
-# Use a Node.js base image
+# # Use a Node.js base image
 # FROM node:latest
 
 # # Set the working directory in the container
@@ -18,21 +18,37 @@
 
 # # Run the app in development mode with hot module replacement
 # CMD ["npm", "run", "dev"]
-FROM node:18-bullseye-slim
+# FROM node:18-bullseye-slim
 
-ENV YARN_CACHE_FOLDER=/cache/npm
+# ENV YARN_CACHE_FOLDER=/cache/npm
 
-WORKDIR /app
+# WORKDIR /app
 
-# install dependencies
-# COPY web/package.json web/yarn.lock ./
-COPY package*.json ./
-RUN --mount=type=cache,target=/cache/npm \
-  npm install
+# # install dependencies
+# # COPY web/package.json web/yarn.lock ./
+# COPY package*.json ./
+# RUN --mount=type=cache,target=/cache/npm \
+#   npm install
 
-# copy app source
+# # copy app source
+# COPY . .
+
+# ENV VITE_HOST=0.0.0.0
+# ENV VITE_PORT=5173
+# CMD ["npm", "run", "dev"]
+
+
+# Testing this version 12/14.  I messed with the vite config so check this commit.
+FROM node:18-alpine
+
+WORKDIR /react-vite
+
+COPY package.json .
+
+RUN npm install
+
 COPY . .
 
-ENV VITE_HOST=0.0.0.0
-ENV VITE_PORT=5173
-CMD ["npm", "run", "dev"]
+EXPOSE 3000
+
+CMD [ "npm", "run", "dev" ]

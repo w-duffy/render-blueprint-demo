@@ -27,11 +27,18 @@ services:
       - FLASK_APP=app
       - SCHEMA=mydb
       - FLASK_ENV=development
+      # - FLASK_ENV=produciton
+      # - FLASK_DEBUG=true
       - DATABASE_URL=postgresql://username:password@db:5432/dbname
     depends_on:
       - db
     ports:
       - "8000:8000"
+    develop:
+      watch:
+      - path: ./react-vite/dist
+        target: /var/www/react-vite/dist/
+        action: sync
 
   db:
     image: postgres
@@ -43,14 +50,26 @@ services:
       - "5432:5432"
 
   # frontend:
-  #   # entrypoint: /bin/sh
+  # #   entrypoint: /bin/sh
   #   build: ./react-vite
+  #   depends_on:
+  #     - web
   #   ports:
-  #     - "5735:5173"
+  #     - "3000:3000"
+  #   develop:
+  #     watch:
+  #       - path: ./react-vite/dist
+  #         target: /react-vite/dist
+  #         action: sync
   #   volumes:
   #     - ./react-vite:/app
   #     - /app/node_modules
   #   environment:
   #     - NODE_ENV=produciton
+  #   develop:
+  #     watch:
+  #       - path: ./react-vite/src
+  #         target: /app/src
+  #         action: sync
   #   stdin_open: true
   #   tty: true
