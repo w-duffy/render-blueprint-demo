@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
 import react from "@vitejs/plugin-react";
 
+//This loader is faster, but can have issues when exporting non-react components
+// import react from "@vitejs/plugin-react-swc"
+
 // https://vitejs.dev/config/
 export default defineConfig((mode) => ({
   plugins: [
@@ -12,16 +15,25 @@ export default defineConfig((mode) => ({
     }),
   ],
   server: {
-    // open: true,
+    open: true,
     port: 3000,
-    host: true,
+    host: "0.0.0.0",
     strictPort: true,
-    proxy: {
-      "^/web":{
-        target: "http://web",
-        changeOrigin: true
-      }
+    // https://vitejs.dev/config/server-options.html#server-proxy
+        proxy: {
+      "/api": "http://localhost:8000",
     },
+    // hmr:{
+    //   clientPort: 3000
+    // },
+    // This is what we want if we're trying to run "production locally" which
+    // isn't really beneficial.
+    // proxy: {
+    //   "^/web":{
+    //     target: "http://web",
+    //     // changeOrigin: true
+    //   }
+    // },
   },
 }));
 

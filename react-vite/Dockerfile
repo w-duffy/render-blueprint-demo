@@ -1,23 +1,23 @@
-# # Use a Node.js base image
-# FROM node:latest
+# Use a Node.js base image
+FROM node:latest
 
-# # Set the working directory in the container
-# WORKDIR /app
+# Set the working directory in the container
+WORKDIR /app
 
-# # Copy package.json and package-lock.json (or yarn.lock if you're using Yarn)
-# COPY package*.json ./
+# Copy package.json and package-lock.json (or yarn.lock if you're using Yarn)
+COPY package*.json ./
 
-# # Install project dependencies
-# RUN npm install
+# Install project dependencies
+RUN npm install
 
-# # Copy the rest of your app's source code from your host to your image filesystem.
-# COPY . .
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
 
-# # Make port 3000 available to the world outside this container
-# EXPOSE 5173
-
-# # Run the app in development mode with hot module replacement
-# CMD ["npm", "run", "dev"]
+# Make port 3000 available to the world outside this container
+EXPOSE 5173
+# Run the app in development mode with hot module replacement
+CMD ["npm", "run", "dev"]
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # FROM node:18-bullseye-slim
 
 # ENV YARN_CACHE_FOLDER=/cache/npm
@@ -37,18 +37,21 @@
 # ENV VITE_PORT=5173
 # CMD ["npm", "run", "dev"]
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# This WORKS.  Not really productive though since our
+# Server is serving our frontend.
 
 # Testing this version 12/14.  I messed with the vite config so check this commit.
-FROM node:18-alpine
+# FROM node:18-alpine
 
-WORKDIR /react-vite
+# WORKDIR /react-vite
 
-COPY package.json .
+# COPY package.json .
 
-RUN npm install
+# RUN npm install
 
-COPY . .
+# COPY . .
 
-EXPOSE 3000
+# EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
+# CMD [ "npm", "run", "dev" ]

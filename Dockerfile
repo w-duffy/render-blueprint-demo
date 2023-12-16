@@ -33,6 +33,7 @@ FROM python:3.11-slim
 # RUN apk add --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
 # RUN apt-get --no-cache build-base postgresql-dev gcc python3-dev musl-dev netcat-openbsd
 
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     postgresql-client libpq-dev \
@@ -41,14 +42,16 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 
+# ARG PIP_DISABLE_PIP_VERSION_CHECK=1
+# ARG PIP_NO_CACHE_DIR=1
 
 # Copy and install Python dependencies
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install psycopg2
 RUN pip install --no-cache-dir psycopg2
-
 
 # Set the working directory
 WORKDIR /var/www

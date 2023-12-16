@@ -15,7 +15,7 @@ exec gunicorn app:app --bind 0.0.0.0:8000
 # exec gunicorn app:app
 
 
-# Above works locally.  Below is for testing deploying render blueprint
+# Above works for local production envionment
 
 # ~~~~~~~~~~~~~~~~ this works for PRODUCITON using a blueprint defined in the render.yaml:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # echo "PostgreSQL started"
